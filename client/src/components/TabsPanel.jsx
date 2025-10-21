@@ -5,7 +5,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import ArticleIcon from '@mui/icons-material/Article';
 import MapIcon from '@mui/icons-material/Map';
 
-export default function TabsPanel() {
+export function TabsPanel({ analysisResult }) {
   const [activeTab, setActiveTab] = useState('overview');
 
   const tabs = [
@@ -16,7 +16,6 @@ export default function TabsPanel() {
 
   return (
     <div className="tabs-container">
-      {/* Tab Headers */}
       <div className="tabs-header">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -33,22 +32,31 @@ export default function TabsPanel() {
         })}
       </div>
 
-      {/* Tab Content */}
       <div className="tab-content">
         {activeTab === 'overview' && (
           <div className="tab-panel">
             <h3 className="panel-title">Analysis Overview</h3>
             <p className="panel-description">
-              Upload an image to see a comprehensive overview of the analysis results, including key metrics and summary statistics.
+              {analysisResult
+                ? 'Analysis complete! View the results below.'
+                : 'Upload an image to see a comprehensive overview of the analysis results.'}
             </p>
             <div className="metrics-grid">
               <div className="metric-card">
                 <p className="metric-label">Confidence</p>
-                <p className="metric-value">--</p>
+                <p className="metric-value">
+                  {analysisResult?.report.ai_generated[analysisResult.report.ai_generated.verdict].confidence
+                    ? `${(analysisResult.report.ai_generated[analysisResult.report.ai_generated.verdict].confidence * 100).toFixed(1)}%`
+                    : '--'}
+                </p>
               </div>
               <div className="metric-card">
-                <p className="metric-label">Processing Time</p>
-                <p className="metric-value">--</p>
+                <p className="metric-label">Verdict</p>
+                <p className="metric-value">
+                  {analysisResult?.report.ai_generated.verdict
+                    ? `${analysisResult.report.ai_generated.verdict.toUpperCase()}`
+                    : '--'}
+                </p>
               </div>
             </div>
           </div>
@@ -58,22 +66,35 @@ export default function TabsPanel() {
           <div className="tab-panel">
             <h3 className="panel-title">Detailed Analysis</h3>
             <p className="panel-description">
-              Detailed breakdown of the analysis results, including technical information and granular data points.
+              Detailed breakdown of the analysis results.
             </p>
             <div className="details-card">
-              <p className="placeholder-text">No data available yet</p>
+              {analysisResult ? (
+                <pre className="results-json">
+                  {JSON.stringify(analysisResult.results, null, 2)}
+                </pre>
+              ) : (
+                <p className="placeholder-text">No data available yet</p>
+              )}
             </div>
           </div>
         )}
 
         {activeTab === 'heatmap' && (
           <div className="tab-panel">
-            <h3 className="panel-title">Image Heatmap</h3>
+            <h3 className="panel-title">Heatmap</h3>
             <p className="panel-description">
-              Intelligent insights and recommendations based on the image analysis powered by advanced algorithms.
+              Intelligent insights based on the analysis.
             </p>
             <div className="insights-card">
-              <p className="placeholder-text">Upload and analyze an image to generate insights</p>
+              {analysisResult ? (
+                <div>
+                  <p><strong>Status:</strong> {analysisResult.status}</p>
+                  <p><strong>ID:</strong> {analysisResult.id}</p>
+                </div>
+              ) : (
+                <p className="placeholder-text">Upload and analyze an image to generate insights</p>
+              )}
             </div>
           </div>
         )}
