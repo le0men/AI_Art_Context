@@ -6,6 +6,7 @@ import './index.css';
 export default function App() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [gptResult, setGPTResult] = useState(null);
 
   const handleImageUpload = (image) => {
     setUploadedImage(image);
@@ -13,9 +14,9 @@ export default function App() {
     setAnalysisResult(null);
   };
 
-  const handleAnalysisComplete = (result) => {
+  const handleAnalysisComplete = (result, gpt_result) => {
     setAnalysisResult(result);
-    console.log('Analysis completed:', result);
+    setGPTResult(gpt_result);
   };
 
   return (
@@ -32,7 +33,8 @@ export default function App() {
           </div>
 
           <div className="tabs-section">
-            <TabsPanel analysisResult={analysisResult} />
+            <TabsPanel analysisResult={analysisResult}
+              gpt_results={gptResult} />
           </div>
         </div>
       </div>

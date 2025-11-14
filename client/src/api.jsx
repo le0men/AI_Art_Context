@@ -72,5 +72,24 @@ export const apiService = {
     } catch (error) {
       throw error;
     }
-  }
+  },
+
+  // Detect AI-generated content by file upload
+  detectAI: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await api.post('/api/detect-ai', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 }
+
+

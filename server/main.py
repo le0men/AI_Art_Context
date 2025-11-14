@@ -10,11 +10,17 @@ import os
 import json
 import requests
 import logging
+from openai import OpenAI
+import base64
 
 load_dotenv()
 API_KEY = os.getenv("AIORNOT_API_KEY")
 IMAGE_ENDPOINT = "https://api.aiornot.com/v2/image/sync"
 
+openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
+# logging setup for debugging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s : %(message)s"
 )
@@ -57,6 +63,7 @@ class AnalysisResponse(BaseModel):
     id: str
     created_at: str
     report: Json
+    reverse: Optional[Json]
 
 
 class ErrorResponse(BaseModel):
@@ -65,15 +72,11 @@ class ErrorResponse(BaseModel):
     timestamp: str
 
 
-# ============================================
-# Dependency Functions
-# ============================================
-
-
-async def verify_api_key():
-    """Example dependency for API key verification"""
-    # Implement your authentication logic here
-    return True
+class AIDetectionResponse(BaseModel):
+    id: str
+    analysis: Json
+    model: str
+    tokens_used: Optional[dict] = None
 
 
 # ============================================
@@ -100,9 +103,7 @@ async def health_check():
 
 
 @app.post("/api/analyze", response_model=AnalysisResponse, tags=["Analysis"])
-async def analyze_image(
-    file: UploadFile = File(...), authenticated: bool = Depends(verify_api_key)
-):
+async def analyze_image(file: UploadFile = File(...)):
     """
     Analyze an uploaded image
 
@@ -114,9 +115,6 @@ async def analyze_image(
     """
 
     try:
-        if not authenticated:
-            raise HTTPException(status_code=400, detail="API Key issue")
-        # Validate file type
         if not file.content_type.startswith("image/"):
             raise HTTPException(status_code=400, detail="File must be an image")
 
@@ -128,7 +126,10 @@ async def analyze_image(
             headers={"Authorization": f"Bearer {API_KEY}"},
             files={"image": contents},
             params={
-                "only": ["ai_generated"]
+                "only": [
+                    "ai_generated",
+                    #  "reverse_search"
+                ]
                 # "external_id": "my-tracking-id"  # Optional
                 # Example: only run reverse_search:
                 # "only": ["reverse_search"]
@@ -144,36 +145,86 @@ async def analyze_image(
             id=body["id"],
             created_at=body["created_at"],
             report=json.dumps(body["report"]),
+            reverse=json.dumps(body.get("reverse_search")),
         )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
 
 
-@app.post("/api/analyze-url", response_model=AnalysisResponse, tags=["Analysis"])
-async def analyze_image_url(
-    request: AnalysisRequest, authenticated: bool = Depends(verify_api_key)
-):
+@app.post("/api/detect-ai", response_model=AIDetectionResponse, tags=["AI Detection"])
+async def detect_ai_generated(file: UploadFile = File(...)):
     """
-    Analyze an image from URL
+    Analyze an image to detect AI-generated content using GPT-4o-mini
 
     Args:
-        request: AnalysisRequest with image URL
+        file: Image file to analyze
 
     Returns:
-        AnalysisResponse with analysis results
+        AIDetectionResponse with analysis results
     """
-    if not request.image_url:
-        raise HTTPException(status_code=400, detail="image_url is required")
 
-    # TODO: Implement URL-based image analysis
-    return AnalysisResponse(
-        id="analysis_456",
-        status="completed",
-        confidence=0.92,
-        processing_time=1.56,
-        results={"source": "url", "url": request.image_url},
-    )
+    try:
+        # Validate file type
+        if not file.content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="File must be an image")
+
+        # Read and encode image to base64
+        contents = await file.read()
+        base64_image = base64.b64encode(contents).decode("utf-8")
+
+        # Determine image type for data URL
+        data_url = f"data:{file.content_type};base64,{base64_image}"
+
+        # load prompt
+        file_path = "prompt_visual.txt"
+        with open(file_path, "r", encoding="utf-8") as f:
+            prompt_content = f.read()
+
+        # Call OpenAI API with vision capabilities
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a visual artifact detector and a multimodal analyst. Your task is to inspect the image and identify visual artifacts indicative of AI generation or synthetic.",
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"{prompt_content}",
+                        },
+                        {"type": "image_url", "image_url": {"url": data_url}},
+                    ],
+                },
+            ],
+            max_tokens=2000,
+        )
+
+        # Extract response
+        analysis_text = response.choices[0].message.content
+        tokens_used = {
+            "prompt_tokens": response.usage.prompt_tokens,
+            "completion_tokens": response.usage.completion_tokens,
+            "total_tokens": response.usage.total_tokens,
+        }
+
+        logger.info(f"Tokens used: {tokens_used['total_tokens']}")
+
+        return AIDetectionResponse(
+            id=response.id,
+            analysis=analysis_text,
+            model="gpt-4o-mini",
+            tokens_used=tokens_used,
+        )
+
+    except Exception as e:
+        logger.error(f"Error in AI detection: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500, detail=f"Error processing image with OpenAI: {str(e)}"
+        )
 
 
 @app.get(

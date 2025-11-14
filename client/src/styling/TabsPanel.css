@@ -1,3 +1,4 @@
+/* Main Container */
 .tabs-container {
   background-color: white;
   border-radius: 0.75rem;
@@ -5,6 +6,7 @@
   overflow: hidden;
 }
 
+/* Tab Headers */
 .tabs-header {
   display: flex;
   border-bottom: 1px solid rgb(226, 232, 240);
@@ -36,13 +38,12 @@
   background-color: rgb(239, 246, 255);
 }
 
-.tab-icon {
-  font-size: 1.25rem;
-}
-
+/* Tab Content Area */
 .tab-content {
-  padding: 2rem;
+  padding: 1.5rem;
   min-height: 24rem;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
 .tab-panel {
@@ -61,6 +62,7 @@
   color: rgb(71, 85, 105);
 }
 
+/* Overview Tab - Metrics Grid */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -86,11 +88,312 @@
   color: rgb(30, 41, 59);
 }
 
+/* Details Tab */
+.details-content {
+  margin-top: 1rem;
+}
+
 .details-card {
   background-color: rgb(248, 250, 252);
   border-radius: 0.5rem;
   padding: 1rem;
   margin-top: 1.5rem;
+}
+
+.placeholder-text {
+  font-size: 0.875rem;
+  color: rgb(100, 116, 139);
+  font-style: italic;
+}
+
+/* Insights Tab - AI Analysis Section */
+.ai-analysis-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Overall Assessment Card */
+.assessment-card {
+  background: linear-gradient(135deg, rgb(239, 246, 255), rgb(243, 244, 246));
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 2px solid rgb(191, 219, 254);
+}
+
+.assessment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.assessment-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: rgb(30, 41, 59);
+  margin: 0;
+}
+
+.assessment-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.assessment-badge.likely-ai {
+  background-color: rgb(254, 226, 226);
+  color: rgb(153, 27, 27);
+}
+
+.assessment-badge.unlikely-ai {
+  background-color: rgb(220, 252, 231);
+  color: rgb(22, 101, 52);
+}
+
+.assessment-badge.inconclusive {
+  background-color: rgb(254, 243, 199);
+  color: rgb(120, 53, 15);
+}
+
+.confidence-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.confidence-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confidence-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgb(71, 85, 105);
+}
+
+.confidence-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: rgb(30, 41, 59);
+}
+
+.confidence-bar {
+  width: 100%;
+  height: 1rem;
+  background-color: rgb(226, 232, 240);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgb(59, 130, 246), rgb(37, 99, 235));
+  transition: width 0.5s ease;
+  border-radius: 9999px;
+}
+
+/* Artifacts Section */
+.artifacts-section {
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid rgb(226, 232, 240);
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgb(30, 41, 59);
+  margin: 0 0 1rem 0;
+}
+
+.artifacts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.artifact-card {
+  background-color: rgb(248, 250, 252);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid rgb(226, 232, 240);
+}
+
+.artifact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgb(226, 232, 240);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.artifact-category {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.category-badge {
+  background-color: rgb(219, 234, 254);
+  color: rgb(30, 64, 175);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.severity-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.severity-badge.severity-1,
+.severity-badge.severity-2 {
+  background-color: rgb(34, 197, 94);
+}
+
+.severity-badge.severity-3 {
+  background-color: rgb(234, 179, 8);
+}
+
+.severity-badge.severity-4,
+.severity-badge.severity-5 {
+  background-color: rgb(239, 68, 68);
+}
+
+.evidence-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.evidence-badge.strong {
+  background-color: rgb(220, 252, 231);
+  color: rgb(22, 101, 52);
+}
+
+.evidence-badge.moderate {
+  background-color: rgb(254, 243, 199);
+  color: rgb(120, 53, 15);
+}
+
+.evidence-badge.weak {
+  background-color: rgb(254, 226, 226);
+  color: rgb(153, 27, 27);
+}
+
+.artifact-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.artifact-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.artifact-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(71, 85, 105);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.artifact-value {
+  font-size: 0.875rem;
+  color: rgb(30, 41, 59);
+  line-height: 1.5;
+}
+
+.artifact-value.alternative {
+  color: rgb(100, 116, 139);
+  font-style: italic;
+}
+
+/* Quality Controls Card */
+.quality-controls-card {
+  background-color: rgb(254, 252, 232);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid rgb(254, 240, 138);
+}
+
+.quality-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.quality-item {
+  display: flex;
+  margin-top: 1rem;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.quality-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(120, 53, 15);
+  min-width: 150px;
+  flex-shrink: 0;
+}
+
+.quality-text {
+  font-size: 0.875rem;
+  color: rgb(71, 85, 105);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.quality-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.quality-badge.yes {
+  background-color: rgb(220, 252, 231);
+  color: rgb(22, 101, 52);
+}
+
+.quality-badge.no {
+  background-color: rgb(254, 226, 226);
+  color: rgb(153, 27, 27);
+}
+
+/* Human Review Card */
+.human-review-card {
+  background: linear-gradient(135deg, rgb(254, 242, 242), rgb(254, 226, 226));
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 2px solid rgb(254, 202, 202);
+}
+
+.review-text {
+  font-size: 0.9375rem;
+  color: rgb(71, 85, 105);
+  line-height: 1.6;
+  margin: 0.5rem 0 0 0;
 }
 
 .insights-card {
@@ -101,8 +404,22 @@
   border: 1px solid rgb(233, 213, 255);
 }
 
-.placeholder-text {
-  font-size: 0.875rem;
-  color: rgb(100, 116, 139);
-  font-style: italic;
+/* Scrollbar Styling */
+.tab-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tab-content::-webkit-scrollbar-track {
+  background: rgb(241, 245, 249);
+  border-radius: 4px;
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+  background: rgb(203, 213, 225);
+  border-radius: 4px;
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+  background: rgb(148, 163, 184);
 }

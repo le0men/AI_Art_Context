@@ -63,10 +63,12 @@ export default function ImageUpload({ onImageUpload, onAnalysisComplete }) {
 
     try {
       const result = await apiService.analyzeImage(uploadedFile);
+      const gpt_result = await apiService.detectAI(uploadedFile);
       console.log('Analysis result:', result);
+      console.log('GPT result:', gpt_result);
 
       if (onAnalysisComplete) {
-        onAnalysisComplete(result);
+        onAnalysisComplete(result, gpt_result);
       }
 
     } catch (err) {
