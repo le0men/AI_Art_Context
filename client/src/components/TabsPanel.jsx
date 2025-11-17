@@ -11,7 +11,7 @@ export function TabsPanel({ analysisResult, gpt_results }) {
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChartIcon },
-    { id: 'details', label: 'Details', icon: ArticleIcon },
+    { id: 'details', label: 'Search', icon: ArticleIcon },
     { id: 'insights', label: 'Insights', icon: MapIcon }
   ];
 
@@ -39,7 +39,7 @@ export function TabsPanel({ analysisResult, gpt_results }) {
             <h3 className="panel-title">Analysis Overview</h3>
             <p className="panel-description">
               {analysisResult
-                ? 'Analysis complete! View the results below.'
+                ? 'Analysis complete! View the results from AIorNot below.'
                 : 'Upload an image to see a comprehensive overview of the analysis results.'}
             </p>
             <div className="metrics-grid">
@@ -65,9 +65,9 @@ export function TabsPanel({ analysisResult, gpt_results }) {
 
         {activeTab === 'details' && (
           <div className="tab-panel">
-            <h3 className="panel-title">Detailed Analysis</h3>
+            <h3 className="panel-title">Reverse Search</h3>
             <p className="panel-description">
-              Detailed breakdown of the analysis results.
+              Instances of the image on the internet.
             </p>
 
             {analysisResult?.reverse ? (
@@ -86,7 +86,7 @@ export function TabsPanel({ analysisResult, gpt_results }) {
           <div className="tab-panel">
             <h3 className="panel-title">AI Detection Analysis</h3>
             <p className="panel-description">
-              Structured analysis to detect AI-generated content using GPT-4o-mini.
+              Structured analysis to detect AI-generated content using GPT-4o.
             </p>
 
             {gpt_results ? (
@@ -188,6 +188,36 @@ export function TabsPanel({ analysisResult, gpt_results }) {
                   <div className="human-review-card">
                     <h4 className="section-title">Human Review Notes</h4>
                     <p className="review-text">{gpt_results.analysis.notes_for_human_review}</p>
+                  </div>
+                )}
+
+                {/* Multi-Analysis Section */}
+                {gpt_results.multi_analysis && (
+                  <div className="multi-analysis-card">
+                    <div className="multi-analysis-header">
+                      <h4 className="section-title"> Multimodal Analysis</h4>
+                      <span className={`verdict-badge verdict-${gpt_results.multi_analysis.verdict}`}>
+                        {gpt_results.multi_analysis.verdict?.toUpperCase() || 'N/A'}
+                      </span>
+                    </div>
+
+                    <div className="multi-analysis-body">
+                      <div className="multi-analysis-confidence">
+                        <span className="multi-label">Confidence:</span>
+                        <span className="multi-value">
+                          {gpt_results.multi_analysis.confidence
+                            ? `${(gpt_results.multi_analysis.confidence * 100).toFixed(1)}%`
+                            : 'N/A'}
+                        </span>
+                      </div>
+
+                      {gpt_results.multi_analysis.rationale && (
+                        <div className="multi-analysis-rationale">
+                          <span className="multi-label">Rationale:</span>
+                          <p className="rationale-text">{gpt_results.multi_analysis.rationale}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

@@ -66,15 +66,10 @@ class AnalysisResponse(BaseModel):
     reverse: Optional[Json]
 
 
-class ErrorResponse(BaseModel):
-    error: str
-    detail: Optional[str] = None
-    timestamp: str
-
-
 class AIDetectionResponse(BaseModel):
     id: str
     analysis: Json
+    multi_analysis: Optional[Json] = None
     model: str
     tokens_used: Optional[dict] = None
 
@@ -89,7 +84,6 @@ async def root():
     """Root endpoint - API welcome message"""
     return {
         "message": "Welcome to Image Analysis API",
-        "docs": "/docs",
         "health": "/health",
     }
 
@@ -163,6 +157,8 @@ async def detect_ai_generated(file: UploadFile = File(...)):
     Returns:
         AIDetectionResponse with analysis results
     """
+    # AI model being used
+    used_model = "gpt-4o"
 
     try:
         # Validate file type
@@ -176,14 +172,17 @@ async def detect_ai_generated(file: UploadFile = File(...)):
         # Determine image type for data URL
         data_url = f"data:{file.content_type};base64,{base64_image}"
 
-        # load prompt
+        # load prompts
         file_path = "prompt_visual.txt"
         with open(file_path, "r", encoding="utf-8") as f:
             prompt_content = f.read()
+        file_path = "prompt_multimodal.txt"
+        with open(file_path, "r", encoding="utf-8") as f:
+            multi_prompt_content = f.read()
 
         # Call OpenAI API with vision capabilities
         response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=used_model,
             messages=[
                 {
                     "role": "system",
@@ -203,7 +202,37 @@ async def detect_ai_generated(file: UploadFile = File(...)):
             max_tokens=2000,
         )
 
-        # Extract response
+        # Call OpenAI API for multimodal analysis
+        response_multi = openai_client.chat.completions.create(
+            model=used_model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert multimodal analyst specializing in evaluating the consistency between textual and visual information with the provided media. Your goal is to determine whether the caption (text) and the visual (image) convey consistent meanings about the same situation or intention.",
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"{multi_prompt_content}",
+                        },
+                        {"type": "image_url", "image_url": {"url": data_url}},
+                    ],
+                },
+            ],
+            max_tokens=1000,
+        )
+
+        # Extract responses
+
+        multi_text = ""
+        # check if no caption
+        if response_multi.choices[0].message.content == "None":
+            multi_text = None
+        else:
+            multi_text = str(response_multi.choices[0].message.content)
+
         analysis_text = response.choices[0].message.content
         tokens_used = {
             "prompt_tokens": response.usage.prompt_tokens,
@@ -215,8 +244,9 @@ async def detect_ai_generated(file: UploadFile = File(...)):
 
         return AIDetectionResponse(
             id=response.id,
-            analysis=analysis_text,
-            model="gpt-4o-mini",
+            analysis=str(analysis_text),
+            multi_analysis=multi_text,
+            model=used_model,
             tokens_used=tokens_used,
         )
 
@@ -260,35 +290,6 @@ async def delete_analysis(analysis_id: str):
     """
     # TODO: Implement deletion logic
     return {"message": f"Analysis {analysis_id} deleted successfully"}
-
-
-# ============================================
-# Error Handlers
-# ============================================
-
-
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request, exc):
-    """Custom HTTP exception handler"""
-    return JSONResponse(
-        status_code=exc.status_code,
-        content=ErrorResponse(
-            error=exc.detail, detail=str(exc), timestamp=datetime.utcnow().isoformat()
-        ).dict(),
-    )
-
-
-@app.exception_handler(Exception)
-async def general_exception_handler(request, exc):
-    """General exception handler"""
-    return JSONResponse(
-        status_code=500,
-        content=ErrorResponse(
-            error="Internal server error",
-            detail=str(exc),
-            timestamp=datetime.utcnow().isoformat(),
-        ).dict(),
-    )
 
 
 # ============================================

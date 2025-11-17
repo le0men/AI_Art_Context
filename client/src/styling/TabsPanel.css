@@ -396,6 +396,86 @@
   margin: 0.5rem 0 0 0;
 }
 
+/* Multi-Analysis Card */
+.multi-analysis-card {
+  background: linear-gradient(135deg, rgb(243, 232, 255), rgb(233, 213, 255));
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 2px solid rgb(216, 180, 254);
+}
+
+.multi-analysis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.verdict-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.verdict-badge.verdict-congruent {
+  background-color: rgb(220, 252, 231);
+  color: rgb(22, 101, 52);
+}
+
+.verdict-badge.verdict-incongruent {
+  background-color: rgb(254, 226, 226);
+  color: rgb(153, 27, 27);
+}
+
+.verdict-badge.verdict-uncertain {
+  background-color: rgb(254, 243, 199);
+  color: rgb(120, 53, 15);
+}
+
+.multi-analysis-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.multi-analysis-confidence {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.multi-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(88, 28, 135);
+}
+
+.multi-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: rgb(88, 28, 135);
+}
+
+.multi-analysis-rationale {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.rationale-text {
+  font-size: 0.9375rem;
+  color: rgb(71, 85, 105);
+  line-height: 1.6;
+  margin: 0.5rem 0 0 0;
+}
+
 .insights-card {
   background: linear-gradient(to bottom right, rgb(250, 245, 255), rgb(239, 246, 255));
   border-radius: 0.5rem;

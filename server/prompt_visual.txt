@@ -12,7 +12,7 @@ Functional implausibilities: design or structural flaws that would make an objec
 Violations of physics: instances where an object or scenario defies the laws of physics 
 Sociocultural implausibilities: representations of people that are unlikely to reflect the norms of a culture or society
 
-Only output a JSON object with the following structure: 
+Only output a plain JSON string (not in markdown) with the following structure without extra spaces: 
 {
   "overall_assessment": "likely AI" | "unlikely AI" | "inconclusive",
   "confidence": 0-1,
