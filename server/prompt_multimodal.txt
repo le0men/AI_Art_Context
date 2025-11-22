@@ -12,5 +12,6 @@ Only output a plain JSON string (not in markdown) with the following structure w
 {
   "verdict": "congruent" | "incongruent" | "uncertain",
   "rationale": "Concise explanation of which visual or textual features support your judgment.",
-  "confidence": 0–1
+  "confidence": 0–1,
+  "caption": "The text inside the image caption"
 }

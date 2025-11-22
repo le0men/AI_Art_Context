@@ -202,6 +202,13 @@ export function TabsPanel({ analysisResult, gpt_results }) {
                     </div>
 
                     <div className="multi-analysis-body">
+                      {gpt_results.multi_analysis.caption && (
+                        <div className="multi-analysis-caption">
+                          <span className="multi-label">Caption:</span>
+                          <p className="caption-text">{gpt_results.multi_analysis.caption}</p>
+                        </div>
+                      )}
+
                       <div className="multi-analysis-confidence">
                         <span className="multi-label">Confidence:</span>
                         <span className="multi-value">
